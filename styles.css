@@ -886,3 +886,395 @@ p {
 ::-webkit-scrollbar-thumb:hover {
     background: #e55a2b;
 }
+
+/* Payment Method Selection Styles */
+.payment-method-selection {
+    margin: 20px 0;
+}
+
+.payment-method-selection h4 {
+    margin-bottom: 15px;
+    color: #2C3E50;
+    font-size: 1.1rem;
+}
+
+.payment-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.payment-option-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: inherit;
+}
+
+.payment-option-btn i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.payment-option-btn small {
+    display: block;
+    color: #888;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.payment-option-btn:hover {
+    border-color: #FF6B35;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+}
+
+.payment-option-btn.active {
+    border-color: #FF6B35;
+    background: linear-gradient(135deg, #FF6B35, #F39C12);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+}
+
+.payment-option-btn.active i {
+    color: white;
+}
+
+.payment-option-btn.active small {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* PayPal Button Container */
+#paypal-button-container {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Mobile responsive for payment options */
+@media (max-width: 768px) {
+    .payment-options {
+        flex-direction: column;
+    }
+    
+    .payment-option-btn {
+        min-width: auto;
+    }
+}
+
+/* Payment Popup Styles */
+.payment-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.payment-popup {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.payment-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.payment-popup-header h3 {
+    margin: 0;
+    color: #2C3E50;
+    font-size: 1.4rem;
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-popup:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.payment-popup-content {
+    padding: 25px;
+}
+
+.donation-summary {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #FF6B35, #F39C12);
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.donation-summary h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.5rem;
+}
+
+.donation-summary #selected-amount {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.donation-type-text {
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.payment-method {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.payment-method-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.payment-method-header i {
+    font-size: 1.2rem;
+    color: #FF6B35;
+}
+
+.payment-method-header h4 {
+    margin: 0;
+    color: #2C3E50;
+}
+
+.payment-details {
+    padding: 20px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item .label {
+    font-weight: 500;
+    color: #666;
+    min-width: 120px;
+}
+
+.detail-item .value {
+    font-weight: 600;
+    color: #2C3E50;
+    flex-grow: 1;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.copy-btn {
+    background: #FF6B35;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: #e55a2b;
+    transform: translateY(-1px);
+}
+
+.mobile-payment-option {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-payment-option:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.mobile-provider {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.provider-logo {
+    width: 60px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.provider-logo-text {
+    width: 60px;
+    height: 30px;
+    background: #2C3E50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.provider-details {
+    flex-grow: 1;
+}
+
+.provider-details h5 {
+    margin: 0 0 10px 0;
+    color: #2C3E50;
+    font-size: 1rem;
+}
+
+.payment-instructions {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #FF6B35;
+}
+
+.payment-instructions h4 {
+    margin: 0 0 15px 0;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-instructions h4 i {
+    color: #FF6B35;
+}
+
+.payment-instructions ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.payment-instructions li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.contact-support {
+    margin-top: 20px;
+    text-align: center;
+    padding: 15px;
+    background: #e8f4fd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.contact-support a {
+    color: #FF6B35;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-support a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .payment-popup {
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .payment-popup-content {
+        padding: 20px;
+    }
+    
+    .mobile-provider {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .detail-item .value {
+        text-align: left;
+        margin-right: 0;
+    }
+    
+    .donation-summary #selected-amount {
+        font-size: 1.8rem;
+    }
+}

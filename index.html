@@ -4,7 +4,7 @@
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opulent NGO - Creating Change Together</title>
+    <title> AFFULENT AID ALLIANCE NGO - Creating Change Together</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,11 +15,10 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="opulent_logo.png" alt="Opulent Outreach Foundation Logo"
-                    class="logo-image">
+                <img src="affulent.png" alt="Affulent Aid Alliance Logo" class="logo-image">
                 <div class="logo-text">
-                    <h2>OPULENT</h2>
-                    <span class="logo-subtitle">OUTREACH FOUNDATION</span>
+                    <h2>AFFULENT AID ALLIANCE</h2>
+                    <span class="logo-subtitle">AFFULENT AID ALLIANCE</span>
                 </div>
             </div>
             <ul class="nav-menu">
@@ -53,7 +52,7 @@
             <div class="hero-content">
                 <h1 class="hero-title">Creating Positive Change<br>in Communities Worldwide</h1>
                 <p class="hero-description">
-                    The Opulent Outreach Foundation is dedicated to improving lives through sustainable development,
+                    The Affulent Aid Alliance is dedicated to improving lives through sustainable development,
                     education, and community empowerment. Join us in making a difference that lasts.
                 </p>
                 <div class="hero-buttons">
@@ -232,10 +231,10 @@
                     <div class="impact-content">
                         <h3>Clean Water Access</h3>
                         <p>Provided clean water access to 100+ communities through well construction and filtration
-                        systems.</p>
-                    </div>              
+                            systems.</p>
+                    </div>
+                </div>
             </div>
-        </div>
         </div>
     </section>
 
@@ -289,7 +288,28 @@
                                 Monthly donation
                             </label>
                         </div>
+                        
+                        <!-- Payment Method Selection -->
+                        <div class="payment-method-selection">
+                            <h4>Choose Payment Method:</h4>
+                            <div class="payment-options">
+                                <button type="button" class="payment-option-btn active" data-method="online">
+                                    <i class="fas fa-credit-card"></i>
+                                    Online Payment
+                                    <small>Cards, Mobile Money</small>
+                                </button>
+                                <button type="button" class="payment-option-btn" data-method="manual">
+                                    <i class="fas fa-university"></i>
+                                    Manual Transfer
+                                    <small>Bank/Mobile Money</small>
+                                </button>
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary btn-large">Donate Now</button>
+                        
+                        <!-- PayPal Button (will be shown for online payments) -->
+                        <div id="paypal-button-container" style="display: none; margin-top: 15px;"></div>
                     </form>
                 </div>
             </div>
@@ -309,14 +329,14 @@
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
                             <h4>Address</h4>
-                            <p>123 Community Street<br>Global City, GC 12345</p>
+                            <p>Msasani, Kinondoni<br>Dar es Salaam, Tanzania</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-phone"></i>
                         <div>
                             <h4>Phone</h4>
-                            <p>+1 (206) 290-8000
+                            <p>+255 746008941
                         </div>
                     </div>
                     <div class="contact-item">
@@ -330,17 +350,17 @@
                         <i class="fas fa-clock"></i>
                         <div>
                             <h4>Office Hours</h4>
-                            <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                            <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
                         </div>
                     </div>
                 </div>
-                <form class="contact-form">
+                <form class="contact-form" id="contact-form">
                     <div class="form-row">
-                        <input type="text" placeholder="Your Name" required>
-                        <input type="email" placeholder="Your Email" required>
+                        <input type="text" id="name" placeholder="Your Name" required>
+                        <input type="email" id="email" placeholder="Your Email" required>
                     </div>
-                    <input type="text" placeholder="Subject" required>
-                    <textarea rows="5" placeholder="Your Message" required></textarea>
+                    <input type="text" id="subject" placeholder="Subject" required>
+                    <textarea rows="5" id="message" placeholder="Your Message" required></textarea>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
             </div>
@@ -352,7 +372,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>OPULENT OUTREACH FOUNDATION</h3>
+                    <h3>AFFULENT AID ALLIANCE</h3>
                     <p>Empowering vulnerable communities through education, healthcare, skills training, environmental
                         conservation, and sustainable development initiatives for lasting positive change.</p>
                     <div class="social-links">
@@ -391,12 +411,147 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Opulent Outreach Foundation. All rights reserved. | Registered Charity Number: 123456789
+                <p>&copy; 2025 Affulent Aid Alliance. All rights reserved. | Registered Charity Number: 123456789
                 </p>
             </div>
         </div>
     </footer>
 
+    <!-- Payment Details Popup -->
+    <div id="payment-popup" class="payment-popup-overlay">
+        <div class="payment-popup">
+            <div class="payment-popup-header">
+                <h3>Payment Details</h3>
+                <button class="close-popup" id="close-payment-popup">&times;</button>
+            </div>
+            <div class="payment-popup-content">
+                <div class="donation-summary">
+                    <h4>Donation Amount: <span id="selected-amount">$0</span></h4>
+                    <p class="donation-type-text">One-time donation</p>
+                </div>
+                
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <div class="payment-method-header">
+                            <i class="fas fa-university"></i>
+                            <h4>Bank Transfer</h4>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <span class="label">Bank Name:</span>
+                                <span class="value">CRDB Bank Tanzania</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Account Name:</span>
+                                <span class="value">Opulent Outreach Foundation</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Account Number:</span>
+                                <span class="value copyable" data-copy="0150123456789">0150123456789</span>
+                                <button class="copy-btn" onclick="copyToClipboard('0150123456789')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">SWIFT Code:</span>
+                                <span class="value copyable" data-copy="CORUTZTZ">CORUTZTZ</span>
+                                <button class="copy-btn" onclick="copyToClipboard('CORUTZTZ')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="payment-method-header">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h4>Mobile Money</h4>
+                        </div>
+                        <div class="payment-details">
+                            <div class="mobile-payment-option">
+                                <div class="mobile-provider">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/320px-M-PESA_LOGO-01.svg.png" alt="M-Pesa" class="provider-logo">
+                                    <div class="provider-details">
+                                        <h5>M-Pesa (Vodacom)</h5>
+                                        <div class="detail-item">
+                                            <span class="label">Number:</span>
+                                            <span class="value copyable">+255 746 008 941</span>
+                                            <button class="copy-btn" onclick="copyToClipboard('+255746008941')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Name:</span>
+                                            <span class="value">Affulent Aid Alliance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mobile-payment-option">
+                                <div class="mobile-provider">
+                                    <div class="provider-logo-text">TIGO PESA</div>
+                                    <div class="provider-details">
+                                        <h5>Tigo Pesa</h5>
+                                        <div class="detail-item">
+                                            <span class="label">Number:</span>
+                                            <span class="value copyable">+255 746 008 941</span>
+                                            <button class="copy-btn" onclick="copyToClipboard('+255746008941')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Name:</span>
+                                            <span class="value">Affulent Aid Alliance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mobile-payment-option">
+                                <div class="mobile-provider">
+                                    <div class="provider-logo-text">AIRTEL</div>
+                                    <div class="provider-details">
+                                        <h5>Airtel Money</h5>
+                                        <div class="detail-item">
+                                            <span class="label">Number:</span>
+                                            <span class="value copyable">+255 746 008 941</span>
+                                            <button class="copy-btn" onclick="copyToClipboard('+255746008941')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Name:</span>
+                                            <span class="value">Affulent Aid Alliance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-instructions">
+                    <h4><i class="fas fa-info-circle"></i> Payment Instructions</h4>
+                    <ol>
+                        <li>Choose your preferred payment method above</li>
+                        <li>Use the provided account details to make your donation</li>
+                        <li>Include "Donation" and your name in the reference/description</li>
+                        <li>Send us a screenshot or receipt via WhatsApp: +255 746 008 941</li>
+                        <li>We'll send you a confirmation and receipt within 24 hours</li>
+                    </ol>
+                </div>
+
+                <div class="contact-support">
+                    <p><strong>Need help?</strong> Contact us at <a href="mailto:info@opulentoutreach.org">info@opulentoutreach.org</a> or WhatsApp: +255 746 008 941</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Gateway Scripts -->
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AQlW8kYiP7WwLrV9RdT3HK-VHy6V_yU_ZZy7s_Cz_y_y_example&currency=USD"></script>
     <script src="script.js"></script>
 </body>
 

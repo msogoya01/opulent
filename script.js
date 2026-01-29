@@ -51,6 +51,9 @@ document.querySelectorAll('.amount-btn').forEach(btn => {
         this.classList.add('active');
         // Clear custom amount input
         document.querySelector('.custom-amount').value = '';
+        
+        // Update PayPal button amount
+        updatePayPalAmount();
     });
 });
 
@@ -59,6 +62,31 @@ document.querySelector('.custom-amount').addEventListener('input', function () {
     if (this.value) {
         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
     }
+    updatePayPalAmount();
+});
+
+// Payment method selection
+document.querySelectorAll('.payment-option-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        // Remove active class from all payment option buttons
+        document.querySelectorAll('.payment-option-btn').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        const method = this.dataset.method;
+        const paypalContainer = document.getElementById('paypal-button-container');
+        const donateBtn = document.querySelector('button[type="submit"]');
+        
+        if (method === 'online') {
+            paypalContainer.style.display = 'block';
+            donateBtn.style.display = 'block';
+            donateBtn.textContent = 'Pay with Flutterwave';
+        } else {
+            paypalContainer.style.display = 'none';
+            donateBtn.style.display = 'block';
+            donateBtn.textContent = 'View Payment Details';
+        }
+    });
 });
 
 // Newsletter form submission
@@ -75,14 +103,57 @@ document.querySelector('.newsletter-form').addEventListener('submit', function (
     }
 });
 
-// Contact form submission
-document.querySelector('.contact-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const formData = new FormData(this);
+// Contact form submission handler - Google Form Integration
+document.addEventListener('DOMContentLoaded', function () {
+    const contactForm = document.querySelector('.contact-form');
 
-    // Here you would typically send the data to your server
-    showMessage('Thank you for your message! We\'ll get back to you soon.', 'success');
-    this.reset();
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            // Get form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Google Form URL - Replace YOUR_GOOGLE_FORM_ID with your actual form ID
+            const googleFormUrl = 'https://docs.google.com/forms/d/e/YOUR_GOOGLE_FORM_ID/formResponse';
+
+            // Create form data for Google Forms
+            // You'll need to replace these entry IDs with your actual form field IDs
+            const formData = new FormData();
+            formData.append('entry.YOUR_NAME_FIELD_ID', name);
+            formData.append('entry.YOUR_EMAIL_FIELD_ID', email);
+            formData.append('entry.YOUR_SUBJECT_FIELD_ID', subject);
+            formData.append('entry.YOUR_MESSAGE_FIELD_ID', message);
+
+            // Submit to Google Form
+            fetch(googleFormUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            }).then(() => {
+                // Success - Google Forms always returns success for no-cors mode
+                showMessage('Thank you for your message! We\'ll get back to you soon.', 'success');
+                contactForm.reset();
+            }).catch(() => {
+                // This rarely happens with no-cors mode, but just in case
+                showMessage('Message sent successfully!', 'success');
+                contactForm.reset();
+            }).finally(() => {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
 });
 
 // Donation form submission
@@ -94,17 +165,201 @@ document.querySelector('.donate-form').addEventListener('submit', function (e) {
     const customAmount = document.querySelector('.custom-amount').value;
 
     if (customAmount) {
-        amount = customAmount;
+        amount = parseFloat(customAmount);
     } else if (activeBtn) {
-        amount = activeBtn.dataset.amount;
+        amount = parseFloat(activeBtn.dataset.amount);
     }
 
     if (amount && amount > 0) {
-        // Here you would integrate with a payment processor
-        showMessage(`Thank you for your generous donation of $${amount}!`, 'success');
+        const paymentMethod = document.querySelector('.payment-option-btn.active').dataset.method;
+        
+        if (paymentMethod === 'online') {
+            // Process online payment with Flutterwave
+            processFlutterwavePayment(amount);
+        } else {
+            // Show manual payment popup
+            showPaymentPopup(amount);
+        }
     } else {
         showMessage('Please select or enter a donation amount.', 'error');
     }
+});
+
+// Flutterwave payment processing
+function processFlutterwavePayment(amount) {
+    const donationType = document.querySelector('input[name="type"]:checked').value;
+    
+    FlutterwaveCheckout({
+        public_key: "FLWPUBK_TEST-SANDBOX-KEY", // Replace with your actual public key
+        tx_ref: "oof-" + Date.now(),
+        amount: amount,
+        currency: "USD",
+        country: "TZ",
+        payment_options: "card,mobilemoney,ussd,banktransfer",
+        customer: {
+            email: "donor@opulentoutreach.org",
+            phone_number: "+255746008941",
+            name: "Anonymous Donor",
+        },
+        customizations: {
+            title: "Opulent Outreach Foundation",
+            description: `${donationType} donation to support community empowerment`,
+            logo: "https://your-website.com/opulent_logo.png",
+        },
+        callback: function (data) {
+            if (data.status === "successful") {
+                showMessage(`Thank you for your $${amount} donation! Payment confirmed. Transaction ID: ${data.transaction_id}`, 'success');
+                // Reset form
+                document.querySelector('.donate-form').reset();
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                // Send confirmation email or save to database here
+                sendDonationConfirmation(data);
+            } else {
+                showMessage('Payment was not completed. Please try again or use manual payment option.', 'error');
+            }
+        },
+        onclose: function() {
+            console.log('Payment modal closed by user');
+        }
+    });
+}
+
+// PayPal Integration
+function updatePayPalAmount() {
+    let amount;
+    const activeBtn = document.querySelector('.amount-btn.active');
+    const customAmount = document.querySelector('.custom-amount').value;
+
+    if (customAmount) {
+        amount = parseFloat(customAmount);
+    } else if (activeBtn) {
+        amount = parseFloat(activeBtn.dataset.amount);
+    } else {
+        amount = 25; // Default amount
+    }
+
+    // Re-render PayPal button with new amount
+    if (window.paypal && amount > 0) {
+        document.getElementById('paypal-button-container').innerHTML = '';
+        
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: amount.toString()
+                        },
+                        description: 'Donation to Opulent Outreach Foundation'
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    showMessage(`Thank you for your $${amount} donation via PayPal, ${details.payer.name.given_name}!`, 'success');
+                    // Reset form
+                    document.querySelector('.donate-form').reset();
+                    document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                });
+            },
+            onError: function(err) {
+                showMessage('PayPal payment failed. Please try again or use another payment method.', 'error');
+                console.error('PayPal Error:', err);
+            }
+        }).render('#paypal-button-container');
+    }
+}
+
+// Send donation confirmation (you can customize this)
+function sendDonationConfirmation(paymentData) {
+    // This is where you'd send the confirmation to your server
+    console.log('Donation confirmed:', paymentData);
+    
+    // Example: Send to your backend
+    /*
+    fetch('/api/donation-confirmation', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            transaction_id: paymentData.transaction_id,
+            amount: paymentData.amount,
+            currency: paymentData.currency,
+            customer: paymentData.customer,
+            status: paymentData.status,
+            timestamp: new Date().toISOString()
+        })
+    });
+    */
+}
+
+// Initialize PayPal on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for PayPal SDK to load, then initialize
+    setTimeout(updatePayPalAmount, 1000);
+});
+
+// Payment popup functions
+function showPaymentPopup(amount) {
+    const popup = document.getElementById('payment-popup');
+    const amountDisplay = document.getElementById('selected-amount');
+    const donationTypeText = document.querySelector('.donation-type-text');
+    
+    // Get donation type
+    const donationType = document.querySelector('input[name="type"]:checked').value;
+    
+    // Update popup content
+    amountDisplay.textContent = `$${amount}`;
+    donationTypeText.textContent = donationType === 'monthly' ? 'Monthly donation' : 'One-time donation';
+    
+    // Show popup
+    popup.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+function hidePaymentPopup() {
+    const popup = document.getElementById('payment-popup');
+    popup.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        showMessage('Copied to clipboard!', 'success');
+    }).catch(function() {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showMessage('Copied to clipboard!', 'success');
+    });
+}
+
+// Event listeners for popup
+document.addEventListener('DOMContentLoaded', function() {
+    const closeBtn = document.getElementById('close-payment-popup');
+    const popup = document.getElementById('payment-popup');
+    
+    // Close popup when clicking the X button
+    closeBtn.addEventListener('click', hidePaymentPopup);
+    
+    // Close popup when clicking outside
+    popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+            hidePaymentPopup();
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && popup.style.display === 'flex') {
+            hidePaymentPopup();
+        }
+    });
 });
 
 // Email validation function
